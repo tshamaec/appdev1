@@ -1,0 +1,72 @@
+The warning about chunk size indicates that your application's assets are quite large, potentially impacting performance. Here are some steps to address this, depending on your requirements:
+
+1. Use Dynamic Imports for Code Splitting
+If there are modules or components only needed at certain times (e.g., specific routes or pages), load them dynamically using import(). For example:
+
+javascript
+Copy code
+// Instead of a static import
+import MyLargeComponent from './components/MyLargeComponent';
+
+// Use a dynamic import
+const MyLargeComponent = () => import('./components/MyLargeComponent');
+This approach will split MyLargeComponent into a separate chunk, loaded only when needed, which reduces the initial load size.
+
+2. Use manualChunks to Customize Chunk Splitting
+If dynamic imports aren’t sufficient, define manualChunks in your Rollup configuration. This option allows you to specify how chunks are created based on your application's structure.
+
+In your vite.config.js or rollup.config.js, add:
+
+javascript
+Copy code
+import { defineConfig } from 'vite';
+
+export default defineConfig({
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            return 'vendor';
+          }
+          // Further chunk specific libraries
+          if (id.includes('some-large-library')) {
+            return 'some-large-library';
+          }
+        },
+      },
+    },
+  },
+});
+This example places all dependencies from node_modules in a vendor chunk, which helps to split larger packages into their own files. Customize further by specifying specific libraries or modules to be split.
+
+3. Adjust chunkSizeWarningLimit
+If the large chunk sizes are not a performance concern, adjust the chunkSizeWarningLimit in your Vite/Rollup config:
+
+javascript
+Copy code
+export default defineConfig({
+  build: {
+    chunkSizeWarningLimit: 1000 // Increase limit to 1000 kB, or as needed
+  }
+});
+Consideration
+For optimal performance, try combining the first two methods to reduce initial load sizes and improve loading efficiency for users.
+
+
+
+
+
+
+Assignment # 7
+
+1. If a key team member is facing a personal problem that affects the project timeline, the first step is to talk to the affected developer to understand the situation and provide support, such as time off or workload changes. I will also review the team's workload and delegate tasks to other members as needed, or seek additional help if resources are insufficient. The project timeline will be revised if necessary, and regular updates will be provided to stakeholders. Honest communication is crucial, and the team will be encouraged to cooperate and motivate each other. A post-mortem will be conducted to assess lessons learned and improve processes. The goal is to balance empathy and management to help the team overcome unexpected challenges and meet the project's goals.
+
+2. If I were the developer facing a family emergency, I would immediately inform my manager of the situation and be transparent about my availability. I will prioritize critical tasks and break down tasks so that they can be easily passed on to other team members as needed. I will provide regular updates and contact the team to help them move forward with the project. I will ask for flexibility if necessary, such as reduced work hours or remote work. After an emergency, I will work with the manager to catch up on delayed tasks and ensure the project is completed. My goal is to ensure that the project is not affected while taking care of my health and personal life.
+
+3. To avoid unexpected issues such as personal crisis, the manager and developer must plan proactively. The manager can set buffer time, contingency plans, and provide workload flexibility to accommodate unexpected delays. The manager and developer should also communicate regularly, and be honest about personal issues to avoid major problems. If there are emergencies, it should be clear how to delegate tasks and find backup resources. Through more realistic and organized planning, avoid project delays and maintain a balance between work and personal life.
+
+
+
+
+
