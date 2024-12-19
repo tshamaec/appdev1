@@ -1,19 +1,32 @@
-import { useState } from "react";
-import TaskList from "./components/TaskList";
+import { useEffect, useState } from 'react'
+import ListTodos from './components/ListTodos'
+import { SignIn } from './components/SignIn'
+import { SignUp } from './components/SignUp'
+import { BrowserRouter as Router, Routes, Route } from 'react-router'
+import { onAuthStateChanged } from 'firebase/auth'
+import { auth } from './firebase'
+import './App.css'
 
 function App() {
-  const [user, setUser] = useState("null");
+  const [user, setUser] = useState(null)
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user)
+    })
+
+    return unsubscribe
+  }, [])
 
   return (
-    <div>
-      <h1>Task Manager</h1>
-      {user ? (
-        <TaskList user={user} />
-      ) : (
-        <p>You must login to view the task lists</p>
-      )}
-    </div>
-  );
+    <Router>
+      <Routes>
+        <Route path="/" element={user ? <ListTodos user={user} /> : <SignIn />} />
+        <Route path="/signin" element={<SignIn />} />
+        <Route path="/signup" element={<SignUp />} />
+      </Routes>
+    </Router>
+  )
 }
 
-export default App;
+export default App
